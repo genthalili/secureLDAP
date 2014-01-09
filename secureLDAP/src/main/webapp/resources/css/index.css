@@ -1,0 +1,51 @@
+body {
+	padding-top: 80px;
+	overflow-y:scroll;
+}
+
+*:focus {
+    outline: 0 !important;
+}
+
+a{
+	cursor:pointer;
+}
+
+
+header nav ul{
+	margin-bottom: 0px !important;
+}
+
+header nav li{
+	text-transform: uppercase;
+	font-weight: bold;
+	border-bottom: 5px solid transparent;
+	max-width: 150px;
+	padding-bottom: 5px;
+	padding-top:5px;
+}
+
+header nav li:nth-child(1).active{
+	border-color : blue;
+}
+
+header nav li:nth-child(2).active{
+	border-color : rgb(10,200,10);
+}
+
+header .navbar-brand{
+	margin-top:5px !important;
+}
+
+.container-view{
+	display:none;
+}
+
+#info{
+	position: fixed;
+	top:10px;
+	width: 500px;
+	left: 50%;
+	margin-left: -250px;
+	z-index: 10000;
+}
