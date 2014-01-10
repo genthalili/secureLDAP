@@ -53,4 +53,9 @@ public class OdmUserDaoImpl implements OdmUserDao {
 		return ldapTemplate.find(query().where("sn").is(lastName), User.class);
 	}
 
+	@Override
+	public List<User> findLikeCn(String cn) {
+		return ldapTemplate.find(query().where("cn").like(cn), User.class);
+	}
+
 }

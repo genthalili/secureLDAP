@@ -46,6 +46,11 @@ public class OdmUserServiceImpl implements OdmUserService {
 		return odmUserDao.findByLastName(lastName);
 	}
 
+	@Override
+	public List<User> findLikeCn(String cn) {
+		return odmUserDao.findLikeCn(cn);
+	}
+
 	
 	
 

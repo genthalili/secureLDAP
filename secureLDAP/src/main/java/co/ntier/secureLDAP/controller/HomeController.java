@@ -77,9 +77,9 @@ public class HomeController {
 					|| request.getParameter("fullname") == "") {
 				users = userService.findAll();
 			} else {
-				User u = userService.findByCn(request.getParameter("fullname"));
+				List<User> u = userService.findLikeCn(request.getParameter("fullname"));
 				defaultView = "users";
-				users.add(u);
+				users.addAll(u);
 			}
 			view.addObject("users", users);
 

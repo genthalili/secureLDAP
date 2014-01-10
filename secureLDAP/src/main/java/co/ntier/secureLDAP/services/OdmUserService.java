@@ -9,6 +9,8 @@ public interface OdmUserService {
 	public User create(User user);
 	
 	public User findByCn(String cn);
+	
+	public List<User> findLikeCn(String cn);
 
 	public void update(User user);
 
