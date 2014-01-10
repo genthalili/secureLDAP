@@ -19,7 +19,7 @@ public class Group {
     private Name dn;
 
     @Attribute(name="cn")
-    @DnAttribute("cn")
+    @DnAttribute(value ="cn", index = 1)
     private String name;
 
     @Attribute(name="member")
@@ -66,6 +66,7 @@ public class Group {
     }
 
     public void removeMember(Name member) {
+    	System.out.println(member);
         members.remove(member);
     }
 

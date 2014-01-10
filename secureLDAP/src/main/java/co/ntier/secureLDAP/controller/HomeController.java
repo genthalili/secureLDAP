@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.ldap.NamingException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -138,6 +139,8 @@ public class HomeController {
 				groupService.create(g);
 			} catch (NamingException e) {
 				errorMsg = this.getErrorLDAP(e);
+			}catch (EmptyResultDataAccessException e) {
+				errorMsg = "Could not find fullname.";
 			}
 		}
 
@@ -161,10 +164,13 @@ public class HomeController {
 						.getParameter("groupname"));
 
 				g.addMember(u.getDn());
+				System.out.println(u.getDn());
 
 				groupService.update(g);
 			} catch (NamingException e) {
 				errorMsg = this.getErrorLDAP(e);
+			}catch (EmptyResultDataAccessException e) {
+				errorMsg = "Could not find fullname/groupname.";
 			}
 		}
 		return "redirect:/";
@@ -181,18 +187,23 @@ public class HomeController {
 			defaultView = "groups";
 
 			try {
-				// TODO@gent remove user from group
+				
 				User u = userService.findByCn(request.getParameter("fullname"));
 
 				Group g = groupService.findByCn(request
 						.getParameter("groupname"));
 
-				g.removeMember(u.getDn());
+				g.removeMember(u.getDn().addAll(0, groupService.getBasePath()));
 
 				groupService.update(g);
 
 			} catch (NamingException e) {
 				errorMsg = this.getErrorLDAP(e);
+				if(errorMsg.contains("ERR_279")){
+					errorMsg = "List of members could not be empty.";
+				}
+			} catch (EmptyResultDataAccessException e) {
+				errorMsg = "Could not find fullname/groupname.";
 			}
 		}
 		return "redirect:/";
@@ -209,7 +220,7 @@ public class HomeController {
 			try {
 				User u = userService.findByCn(request.getParameter("fullname"));
 
-				// TODO@gent remove user from group
+				
 				List<Group> groups = groupService.findAll();
 
 				for (Group group : groups) {
@@ -220,6 +231,8 @@ public class HomeController {
 				userService.delete(u);
 			} catch (NamingException e) {
 				errorMsg = this.getErrorLDAP(e);
+			} catch (EmptyResultDataAccessException e) {
+				errorMsg = "Could not find fullname.";
 			}
 		}
 		return "redirect:/";
@@ -286,13 +299,15 @@ public class HomeController {
 
 			try {
 				Group g = groupService.findByCn(request.getParameter("cn"));
-
-				// TODO@gent
+				System.out.println(g.toString());
+				
 				g.setName(request.getParameter("groupname"));
-
+				
 				groupService.update(g);
 			} catch (NamingException e) {
 				errorMsg = this.getErrorLDAP(e);
+			} catch (EmptyResultDataAccessException e) {
+				errorMsg = "Could not find groupname.";
 			}
 		}
 		return "redirect:/";

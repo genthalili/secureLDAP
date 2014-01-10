@@ -17,6 +17,8 @@ import co.ntier.secureLDAP.models.Group;
 @Service
 public class OdmGroupServiceImpl implements OdmGroupService, BaseLdapNameAware {
 
+	
+
 	@Autowired
 	private OdmGroupDao odmGroupDao;
 
@@ -61,6 +63,7 @@ public class OdmGroupServiceImpl implements OdmGroupService, BaseLdapNameAware {
 				e.printStackTrace();
 			}
 		}
+		
 		odmGroupDao.update(group);
 	}
 
@@ -80,5 +83,13 @@ public class OdmGroupServiceImpl implements OdmGroupService, BaseLdapNameAware {
 		this.basePath = baseLdapPath;
 
 	}
+
+	@Override
+	public LdapName getBasePath() {
+		return basePath;
+	}
+	
+	
+	
 
 }
