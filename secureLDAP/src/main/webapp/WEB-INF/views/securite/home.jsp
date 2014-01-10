@@ -13,9 +13,9 @@
 <link rel="stylesheet" href="resources/css/index.css" media="screen">
 </head>
 <body>
-	<div id="info" class="alert alert-danger alert-dismissable hidden">
+	<div id="info" class="alert alert-warning alert-dismissable hidden">
 	  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-	  <strong>Error !</strong> <span class="text"></span>
+	  <strong></strong>
 	</div>
 	
 	<header class="navbar navbar-masthead navbar-default navbar-fixed-top" role="banner">
@@ -48,10 +48,12 @@
 	
 	
 	<div id="users" class="container container-view">
-		<div class="well col-md-2">
-			<button class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#add_user">ADD A USER</button>
-		</div>
-		<div class="well col-md-3 col-md-offset-7">
+		<sec:authorize access="hasAnyRole('ROLE_ADMINISTRATOR','ROLE_HELPDESK')">
+			<div class="well col-md-2">
+				<button class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#add_user">ADD A USER</button>
+			</div>
+		</sec:authorize>
+		<div class="well col-md-3 pull-right">
 			<form method="GET" action="/secureLDAP/" class="form-inline pull-right" role="form">
 			  <div class="form-group">
 			    <label class="sr-only" for="fullname">fullname</label>
@@ -66,7 +68,9 @@
 				<th>dn</th>
 				<th>fullname</th>
 				<th>surname</th>
-				<th></th>
+				<sec:authorize access="hasAnyRole('ROLE_ADMINISTRATOR','ROLE_HELPDESK')">
+					<th></th>
+				</sec:authorize>
 			</thead>
 			<tbody>
 			<c:forEach items="${users}" var="user">
@@ -74,20 +78,24 @@
 					<td>${user.dn}</td>
 					<td>${user.fullName}</td>
 					<td>${user.surName}</td>
-					<td>
-						<div class="btn-group btn-block">
-						  <button type="button" class="btn btn-default btn-block dropdown-toggle" data-toggle="dropdown">
-						  	<span class="glyphicon glyphicon-cog"></span>
-						    <span class="sr-only">Toggle Dropdown</span>
-						  </button>
-						  <ul class="dropdown-menu" role="menu">
-						    <li><a href="#" data-toggle="modal" data-target="#edit_user"><span class="glyphicon glyphicon-edit"></span> Edit</a></li>
-						    <li><a href="/secureLDAP/deleteUser?fullname=${user.fullName }"><span class="glyphicon glyphicon-remove"></span> Delete</a></li>
-						    <li class="divider"></li>
-						    <li><a href="/secureLDAP/resetPassword?fullname=${user.fullName }"><span class="glyphicon glyphicon-refresh"></span> Reset password</a></li>
-						  </ul>
-						</div>
-					</td>
+					<sec:authorize access="hasAnyRole('ROLE_ADMINISTRATOR','ROLE_HELPDESK')">
+						<td>
+							<div class="btn-group btn-block">
+							  <button type="button" class="btn btn-default btn-block dropdown-toggle" data-toggle="dropdown">
+							  	<span class="glyphicon glyphicon-cog"></span>
+							    <span class="sr-only">Toggle Dropdown</span>
+							  </button>
+							  <ul class="dropdown-menu" role="menu">
+							    <li><a href="#" data-toggle="modal" data-target="#edit_user"><span class="glyphicon glyphicon-edit"></span> Edit</a></li>
+							    <sec:authorize access="hasAnyRole('ROLE_ADMINISTRATOR')">
+							    	<li><a href="/secureLDAP/deleteUser?fullname=${user.fullName }"><span class="glyphicon glyphicon-remove"></span> Delete</a></li>
+						    	</sec:authorize>
+						    	<li class="divider"></li>
+						    	<li><a href="/secureLDAP/resetPassword?fullname=${user.fullName }"><span class="glyphicon glyphicon-refresh"></span> Reset password</a></li>
+							  </ul>
+							</div>
+						</td>
+					</sec:authorize>
 				</tr>
 			</c:forEach>
 			</tbody>
@@ -95,9 +103,11 @@
 	</div>
 	
 	<div id="groups" class="container container-view">
-		<div class="well col-md-2">
-			<button class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#add_group">ADD A GROUP</button>
-		</div>
+		<sec:authorize access="hasAnyRole('ROLE_ADMINISTRATOR','ROLE_MANAGER')">
+			<div class="well col-md-2">
+				<button class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#add_group">ADD A GROUP</button>
+			</div>
+		</sec:authorize>
 	
 		<table class="table table-striped">
 			<thead>
@@ -119,11 +129,13 @@
 						    <span class="sr-only">Toggle Dropdown</span>
 						  </button>
 						  <ul class="dropdown-menu" role="menu">
-						    <li><a href="#" data-toggle="modal" data-target="#edit_group"><span class="glyphicon glyphicon-edit"></span> Edit</a></li>
-						    <c:if test="${ group.name != 'administrator' && group.name != 'helpdesk' && group.name != 'groupname'}">
-						    	<li><a href="/secureLDAP/deleteGroup?groupname=${group.name }"><span class="glyphicon glyphicon-remove"></span> Delete</a></li>
-						    </c:if>
-						    <li class="divider"></li>
+						   <sec:authorize access="hasAnyRole('ROLE_ADMINISTRATOR', 'ROLE_MANAGER')">
+						   		<c:if test="${ group.name != 'administrator' && group.name != 'helpdesk' && group.name != 'manager'}">
+						    		<li><a href="#" data-toggle="modal" data-target="#edit_group"><span class="glyphicon glyphicon-edit"></span> Edit</a></li>
+							    	<li><a href="/secureLDAP/deleteGroup?groupname=${group.name }"><span class="glyphicon glyphicon-remove"></span> Delete</a></li>
+						    		<li class="divider"></li>
+							    </c:if>
+						    </sec:authorize>
 						    <li><a href="#" data-toggle="modal" data-target="#add_group_user"><span class="glyphicon glyphicon-plus-sign"></span> Add a user</a></li>
 						    <li><a href="#" data-toggle="modal" data-target="#remove_group_user"><span class="glyphicon glyphicon-minus-sign"></span> Remove a user</a></li>
 						  </ul>
@@ -147,10 +159,6 @@
 	      	<form role="form" method="post" class="col-md-8 col-md-offset-2" action="/secureLDAP/updateUser">
 	      	  <div class="alert alert-warning">Edit user attributes</div>
 	      	  <input type="hidden" name="cn" value=""/>
-			  <div class="form-group">
-			    <label for="dn">dn</label>
-			    <input type="text" name="dn" class="form-control" id="dn" placeholder="dn">
-			  </div>
 			  <div class="form-group">
 			    <label for="fullname">fullname</label>
 			    <input type="text" name="fullname" class="form-control" id="fullname" placeholder="fullname">
@@ -186,12 +194,8 @@
 	      	  <div class="alert alert-warning">Edit group attributes</div>
 	      	  <input type="hidden" name="cn" value=""/>
 			  <div class="form-group">
-			    <label class="sr-only" for="dn">dn</label>
-			    <input type="text" name="dn" class="form-control" id="dn" placeholder="dn">
-			  </div>
-			  <div class="form-group">
 			    <label class="sr-only" for="groupname">groupname</label>
-			    <input type="text" name="groupname" class="form-control" id="groupname" placeholder="fullname">
+			    <input type="text" name="groupname" class="form-control" id="groupname" placeholder="groupname">
 			  </div>
 			</form>
 			</div>

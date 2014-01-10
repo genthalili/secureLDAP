@@ -36,7 +36,7 @@ var LDAP = (function(){
 		
 		if(errorMsg != ""){
 			$('#info')
-				.find('.text')
+				.find('strong')
 					.html(errorMsg)
 					.end()
 				.removeClass('hidden');
@@ -58,9 +58,7 @@ var LDAP = (function(){
 			var $td = $(this).parents('td');
 			var surname = $td.prev().html();
 			var fullname = $td.prev().prev().html();
-			var dn = $td.prev().prev().prev().html();
 			user = {
-				'dn' : dn,
 				'fullname' : fullname,
 				'surname' : surname
 			};
@@ -69,9 +67,7 @@ var LDAP = (function(){
 		$('a[data-target="#edit_group"], a[data-target="#add_group_user"], a[data-target="#remove_group_user"]').click(function(){
 			var $td = $(this).parents('td');
 			var groupname = $td.prev().prev().html();
-			var dn = $td.prev().prev().prev().html();
 			group = {
-				'dn' : dn,
 				'groupname' : groupname
 			};
 		});
@@ -96,9 +92,6 @@ var LDAP = (function(){
 		$('#edit_group').on('show.bs.modal', function (e) {
 			$(this)
 				.find('form')
-					.find('input[name="dn"]')
-						.val(group.dn)
-					.end()
 					.find('input[name="cn"]')
 						.val(group.groupname)
 					.end()
@@ -122,6 +115,10 @@ var LDAP = (function(){
 						.val(group.groupname)
 					
 		});
+		
+		$('form').submit(function(){
+			console.log($(this).serialize());
+		})
 
 	}
 	
