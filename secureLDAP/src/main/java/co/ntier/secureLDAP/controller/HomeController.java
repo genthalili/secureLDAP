@@ -78,6 +78,7 @@ public class HomeController {
 				users = userService.findAll();
 			} else {
 				User u = userService.findByCn(request.getParameter("fullname"));
+				defaultView = "users";
 				users.add(u);
 			}
 			view.addObject("users", users);
@@ -299,7 +300,6 @@ public class HomeController {
 
 			try {
 				Group g = groupService.findByCn(request.getParameter("cn"));
-				System.out.println(g.toString());
 				
 				g.setName(request.getParameter("groupname"));
 				
