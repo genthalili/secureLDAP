@@ -19,26 +19,23 @@
 		<div class="row col-md-6 col-md-offset-3">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h1 class="panel-title">LDAP Login</h1>
+					<h1 class="panel-title">Welcome</h1>
 				</div>
 				<div class="panel-body">
 					<div class="alert alert-warning">
 						<span class="glyphicon glyphicon-info-sign"></span>
-						Complete form below to login.
+						Complete form below to change password.
 						<strong style="color: red"> 
-							${SPRING_SECURITY_LAST_EXCEPTION.message}
+						${errorMsg }
 						</strong>
 					</div>
-					<form  role="form" method="post" action="j_spring_security_check">
-					  <div class="form-group">
-					    <label class="sr-only" for="login">Username</label>
-					    <input type="text" name="login" class="form-control input-lg" id="login" placeholder="Login">
-					  </div>
+					<form  role="form" method="post" action="/secureLDAP/updateUserPassword">
 					  <div class="form-group">
 					    <label class="sr-only" for="password">Password</label>
 					    <input type="password" name="password" class="form-control input-lg" id="password" placeholder="Password">
 					  </div>
 					  <button type="submit" class="btn btn-primary btn-lg">Confirm</button>
+					  <a class="btn btn-default" href='<spring:url value="/logout"></spring:url>'>Logout</a>
 					</form>
 				</div>
 			</div>

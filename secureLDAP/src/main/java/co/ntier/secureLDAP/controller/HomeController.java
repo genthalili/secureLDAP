@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.ldap.NamingException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -91,7 +92,14 @@ public class HomeController {
 
 			errorMsg = "";
 		} else {
-			view.setViewName("login");
+			if(SecurityContextHolder.getContext().getAuthentication().getName() != "anonymousUser"){
+				
+				view.setViewName("securite/user");
+			}
+			else{
+				view.setViewName("login");
+			}
+			
 		}
 		return view;
 	}
@@ -287,6 +295,39 @@ public class HomeController {
 		}
 
 		return "redirect:/";
+
+	}
+	
+	@RequestMapping(value = "/updateUserPassword", method = RequestMethod.POST)
+	public ModelAndView updateUserPassword(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		ModelAndView view = new ModelAndView("securite/user");
+		
+		errorMsg = "";
+		if(SecurityContextHolder.getContext().getAuthentication().getName() != "anonymousUser"){
+
+			try {
+				String cn = SecurityContextHolder.getContext().getAuthentication().getName();
+				User u = userService.findByCn(cn);
+
+
+				if (request.getParameter("password") != "") {
+					u.setPassword(request.getParameter("password"));
+				}
+
+				userService.update(u);
+				
+				errorMsg = "Password changed";
+				
+			} catch (NamingException e) {
+				errorMsg = this.getErrorLDAP(e);
+			}
+		}
+
+		view.addObject("errorMsg",errorMsg);
+		
+		errorMsg = "";
+		return view;
 
 	}
 
